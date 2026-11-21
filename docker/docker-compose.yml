@@ -1,0 +1,163 @@
+name: projet_sharding
+services:
+  cfgsvr:
+    image: mongo:8.0
+    container_name: cfgsvr
+    command: ["mongod","--configsvr","--replSet","cfgRS","--port","27019","--bind_ip_all"]
+    volumes:
+      - cfg_data:/data/configdb
+    networks:
+      - mongo_cluster
+  cfgsvr2:
+    image: mongo:8.0
+    container_name: cfgsvr2
+    command: ["mongod","--configsvr","--replSet","cfgRS","--port","27019","--bind_ip_all"]
+    volumes:
+      - cfg2_data:/data/configdb
+    networks:
+      - mongo_cluster
+
+  cfgsvr3:
+    image: mongo:8.0
+    container_name: cfgsvr3
+    command: ["mongod","--configsvr","--replSet","cfgRS","--port","27019","--bind_ip_all"]
+    volumes:
+      - cfg3_data:/data/configdb
+    networks:
+      - mongo_cluster
+
+  shard1:
+    image: mongo:8.0
+    container_name: shard1
+    command: ["mongod","--shardsvr","--replSet","shard1RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard1_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard1b:
+    image: mongo:8.0
+    container_name: shard1b
+    command: ["mongod","--shardsvr","--replSet","shard1RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard1b_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard1c:
+    image: mongo:8.0
+    container_name: shard1c
+    command: ["mongod","--shardsvr","--replSet","shard1RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard1c_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard2:
+    image: mongo:8.0
+    container_name: shard2
+    command: ["mongod","--shardsvr","--replSet","shard2RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard2_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard2b:
+    image: mongo:8.0
+    container_name: shard2b
+    command: ["mongod","--shardsvr","--replSet","shard2RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard2b_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard2c:
+    image: mongo:8.0
+    container_name: shard2c
+    command: ["mongod","--shardsvr","--replSet","shard2RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard2c_data:/data/db
+    networks:
+      - mongo_cluster
+  
+
+
+
+
+
+
+  shard3:
+    image: mongo:8.0
+    container_name: shard3
+    command: ["mongod","--shardsvr","--replSet","shard3RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard3_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard3b:
+    image: mongo:8.0
+    container_name: shard3b
+    command: ["mongod","--shardsvr","--replSet","shard3RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard3b_data:/data/db
+    networks:
+      - mongo_cluster
+
+  shard3c:
+    image: mongo:8.0
+    container_name: shard3c
+    command: ["mongod","--shardsvr","--replSet","shard3RS","--port","27018","--bind_ip_all"]
+    volumes:
+      - shard3c_data:/data/db
+    networks:
+      - mongo_cluster
+
+
+
+
+
+
+
+
+
+
+
+  mongos:
+    image: mongo:8.0
+    container_name: mongos
+    command: [
+     "mongos",
+     "--configdb",
+     "cfgRS/cfgsvr:27019,cfgsvr2:27019,cfgsvr3:27019",
+     "--port",
+     "27017",
+     "--bind_ip_all"
+             ]
+    ports:
+      - "27017:27017"
+    depends_on:
+      - cfgsvr
+      - cfgsvr2
+      - cfgsvr3
+
+    networks:
+      - mongo_cluster
+
+volumes:
+  cfg_data:
+  cfg2_data:
+  cfg3_data:
+  shard1_data:
+  shard1b_data:
+  shard1c_data:
+  shard2_data:
+  shard2b_data:
+  shard2c_data:
+  shard3_data:
+  shard3b_data:
+  shard3c_data:
+  
+networks:
+  mongo_cluster:
+    driver: bridge

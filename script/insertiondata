@@ -1,0 +1,38 @@
+
+const produits = [
+    "Laptop",
+    "Smartphone",
+    "Clavier",
+    "Souris",
+    "Ecran",
+    "Casque",
+    "Tablette",
+    "Imprimante"
+];
+
+let commandes = [];
+
+for (let i = 1; i <= 100000; i++) {
+
+    let commande = {
+        client_id: i,
+        produit: produits[Math.floor(Math.random() * produits.length)],
+        prix: Math.floor(Math.random() * 9000) + 100,
+        date: new Date(2026, 0, (i % 28) + 1)
+    };
+
+    commandes.push(commande);
+
+    // Insertion par lots de 1000 documents
+    if (commandes.length === 1000) {
+        db.commandes.insertMany(commandes);
+        commandes = [];
+    }
+}
+
+// Insérer les documents restants
+if (commandes.length > 0) {
+    db.commandes.insertMany(commandes);
+}
+
+print("Insertion terminée : 100000 documents !");
